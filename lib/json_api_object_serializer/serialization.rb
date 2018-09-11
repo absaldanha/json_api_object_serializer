@@ -15,20 +15,23 @@ module JsonApiObjectSerializer
         result_hash = { data: nil }
         result_hash[:data] = id_from(resource_object)
         result_hash[:data].merge!(attributes_from(resource_object))
+        result_hash[:data].merge!(relationships_from(resource_object))
 
         result_hash
       end
 
       def id_from(resource_object)
-        { id: resource_object.id.to_s, type: resource_type }
+        { id: resource_object.id.to_s, type: @type }
       end
 
       def attributes_from(resource_object)
         { attributes: resource_attributes_from(resource_object) }
       end
 
-      def resource_type
-        @type
+      def relationships_from(resource_object)
+        return {} if @relationship_collection.empty?
+
+        { relationships: @relationship_collection.serialized_relationships_of(resource_object) }
       end
 
       def resource_attributes_from(resource_object)

@@ -35,10 +35,9 @@ RSpec.describe JsonApiObjectSerializer do
         dummy = dummy_object(id: 123, attributes: attributes)
         serializer = serializer_class.new
 
-        expect(serializer.to_hash(dummy))
-          .to match_json_api_data(attributes: attributes.slice(:first_name),
-            id: 123, type: "dummies"
-          )
+        expect(serializer.to_hash(dummy)).to match_json_api_data(
+          attributes: attributes.slice(:first_name), id: 123, type: "dummies"
+        )
       end
     end
 
@@ -63,10 +62,9 @@ RSpec.describe JsonApiObjectSerializer do
         dummy = dummy_object(id: 123, attributes: attributes)
         serializer = serializer_class.new
 
-        expect(serializer.to_hash(dummy))
-          .to match_json_api_data(attributes: attributes.slice(:first_name),
-            id: 123, type: "dummies"
-          )
+        expect(serializer.to_hash(dummy)).to match_json_api_data(
+          attributes: attributes.slice(:first_name), id: 123, type: "dummies"
+        )
       end
     end
   end
