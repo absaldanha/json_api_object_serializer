@@ -1,0 +1,20 @@
+# frozen_string_literal: true
+
+module JsonApiObjectSerializer
+  module DSL
+    def self.extended(base)
+      base.class_eval do
+        @attribute_collection = AttributeCollection.new
+        @type = nil
+      end
+    end
+
+    def type(type)
+      @type = type.to_s
+    end
+
+    def attribute(name)
+      @attribute_collection.add(Attribute.new(name: name))
+    end
+  end
+end
