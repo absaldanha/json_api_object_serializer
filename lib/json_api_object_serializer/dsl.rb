@@ -16,5 +16,9 @@ module JsonApiObjectSerializer
     def attribute(name)
       @attribute_collection.add(Attribute.new(name: name))
     end
+
+    def attributes(*names)
+      names.each { |name| attribute(name) }
+    end
   end
 end
