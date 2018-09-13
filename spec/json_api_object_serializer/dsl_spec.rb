@@ -19,14 +19,14 @@ RSpec.describe JsonApiObjectSerializer::DSL do
     end
   end
 
-  describe "#type" do
+  describe ".type" do
     it "sets the resource type" do
       class_with_dsl.type "dummy type"
       expect(class_with_dsl._type).to eq "dummy type"
     end
   end
 
-  describe "#attribute" do
+  describe ".attribute" do
     let!(:attribute_class) do
       class_spy("JsonApiObjectSerializer::Attribute").as_stubbed_const
     end
@@ -40,7 +40,7 @@ RSpec.describe JsonApiObjectSerializer::DSL do
     end
   end
 
-  describe "#attributes" do
+  describe ".attributes" do
     let(:attribute_foo) { double(:attribute_foo) }
     let(:attribute_bar) { double(:attribute_bar) }
     let!(:attribute_class) do
@@ -61,7 +61,7 @@ RSpec.describe JsonApiObjectSerializer::DSL do
     end
   end
 
-  describe "#has_one" do
+  describe ".has_one" do
     let!(:relationships_module) do
       class_spy("JsonApiObjectSerializer::Relationships").as_stubbed_const
     end
@@ -72,6 +72,21 @@ RSpec.describe JsonApiObjectSerializer::DSL do
       end.to change { class_with_dsl._relationship_collection_size }.from(0).to(1)
 
       expect(relationships_module).to have_received(:has_one)
+        .with(name: :foo, type: "foos", **{})
+    end
+  end
+
+  describe ".has_many" do
+    let!(:relationships_module) do
+      class_spy("JsonApiObjectSerializer::Relationships").as_stubbed_const
+    end
+
+    it "adds new has_many relationship to relationship collection" do
+      expect do
+        class_with_dsl.has_many :foo, type: "foos"
+      end.to change { class_with_dsl._relationship_collection_size }.from(0).to(1)
+
+      expect(relationships_module).to have_received(:has_many)
         .with(name: :foo, type: "foos", **{})
     end
   end

@@ -62,5 +62,57 @@ RSpec.describe JsonApiObjectSerializer do
         end
       end
     end
+
+    context "with a has many relationship" do
+      context "without an alias" do
+        it "serializes correctly with the has many relationship" do
+          serializer_class.has_many :tasks, type: "tasks"
+
+          attributes = { first_name: "Alexandre", last_name: "Saldanha" }
+
+          dummy_tasks = [dummy_object(id: 1), dummy_object(id: 2)]
+          dummy_user = dummy_object(id: 123, attributes: attributes.merge(tasks: dummy_tasks))
+          serializer = serializer_class.new
+
+          expect(serializer.to_hash(dummy_user)).to eq(
+            data: {
+              id: "123",
+              type: "dummies",
+              attributes: { "first-name": "Alexandre", "last-name": "Saldanha" },
+              relationships: {
+                tasks: {
+                  data: [{ type: "tasks", id: "1" }, { type: "tasks", id: "2" }]
+                }
+              }
+            }
+          )
+        end
+      end
+
+      context "with an alias" do
+        it "serializes correctly with the has many relationship alias" do
+          serializer_class.has_many :tasks, type: "tasks", as: :todos
+
+          attributes = { first_name: "Alexandre", last_name: "Saldanha" }
+
+          dummy_tasks = [dummy_object(id: 1), dummy_object(id: 2)]
+          dummy_user = dummy_object(id: 123, attributes: attributes.merge(tasks: dummy_tasks))
+          serializer = serializer_class.new
+
+          expect(serializer.to_hash(dummy_user)).to eq(
+            data: {
+              id: "123",
+              type: "dummies",
+              attributes: { "first-name": "Alexandre", "last-name": "Saldanha" },
+              relationships: {
+                todos: {
+                  data: [{ type: "tasks", id: "1" }, { type: "tasks", id: "2" }]
+                }
+              }
+            }
+          )
+        end
+      end
+    end
   end
 end
