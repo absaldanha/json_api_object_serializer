@@ -15,5 +15,10 @@ Style/StringLiterals:
 Metrics/LineLength:
   Max: 100
 
+Naming/PredicateName:
+  NameWhitelist:
+    - has_one
+    - has_many
+
 Metrics/BlockLength:
   Enabled: false

@@ -14,7 +14,7 @@ module JsonApiObjectSerializer
     end
 
     def add(attribute)
-      attributes.add attribute
+      attributes.add(attribute)
     end
 
     def serialized_attributes_of(resource_object)
