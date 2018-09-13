@@ -3,14 +3,14 @@
 module JsonApiObjectSerializer
   module Relationships
     class Base
-      include NameFormating
+      include SerializedName
 
-      attr_reader :name, :type, :serialized_name
+      attr_reader :name, :type, :options
 
       def initialize(name:, type:, **options)
         @name = name
         @type = type
-        @serialized_name = name_formating_of(options[:as] || name).to_sym
+        @options = options
       end
 
       def serialization_of(_resource); end

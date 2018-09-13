@@ -1,25 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.shared_examples "a relationship object" do
-  context "with alias option" do
-    subject(:relationship) { described_class.new(name: :foo, type: "foos", as: :bar) }
-
-    it "sets attributes correctly" do
-      expect(relationship).to have_attributes(
-        name: :foo, serialized_name: :bar, type: "foos"
-      )
-    end
-  end
-
-  context "without alias option" do
-    subject(:relationship) { described_class.new(name: :foo_bar, type: "foos") }
-
-    it "sets attributes correctly" do
-      expect(relationship).to have_attributes(
-        name: :foo_bar, serialized_name: :"foo-bar", type: "foos"
-      )
-    end
-  end
+  it_behaves_like "a class with serialized name", name: :foo_bar, type: "foos"
 
   describe "#eql?" do
     subject(:relationship) { described_class.new(name: :foo_bar, type: "foos") }

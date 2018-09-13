@@ -2,13 +2,17 @@
 
 module JsonApiObjectSerializer
   class Attribute
-    include NameFormating
+    include SerializedName
 
-    attr_reader :name, :serialized_name
+    attr_reader :name, :options
 
     def initialize(name:, **options)
       @name = name
-      @serialized_name = name_formating_of(options[:as] || name).to_sym
+      @options = options
+    end
+
+    def serialization_of(resource_object)
+      { serialized_name => resource_object.public_send(name) }
     end
 
     def eql?(other)

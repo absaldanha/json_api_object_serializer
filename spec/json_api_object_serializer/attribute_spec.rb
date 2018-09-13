@@ -1,19 +1,17 @@
 # frozen_string_literal: true
 
 RSpec.describe JsonApiObjectSerializer::Attribute do
-  context "with an alias option" do
-    subject(:attribute) { JsonApiObjectSerializer::Attribute.new(name: :foo_bar, as: :baz_foo) }
+  include DummyObject
 
-    it "sets attributes correctly" do
-      expect(attribute).to have_attributes(name: :foo_bar, serialized_name: :"baz-foo")
-    end
-  end
+  it_behaves_like "a class with serialized name", name: :foo_bar
 
-  context "without an alias option" do
-    subject(:attribute) { JsonApiObjectSerializer::Attribute.new(name: :foo_bar) }
+  describe "#serialization_of" do
+    subject(:attribute) { JsonApiObjectSerializer::Attribute.new(name: :foo) }
 
-    it "sets attributes correctly" do
-      expect(attribute).to have_attributes(name: :foo_bar, serialized_name: :"foo-bar")
+    it "returns the serialized hash of this attribute of the given resource object" do
+      dummy = dummy_object(attributes: { foo: "foo123" })
+
+      expect(attribute.serialization_of(dummy)).to eq foo: "foo123"
     end
   end
 
