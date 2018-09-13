@@ -36,7 +36,7 @@ RSpec.describe JsonApiObjectSerializer::DSL do
         class_with_dsl.attribute :foo
       end.to change { class_with_dsl._attribute_collection_size }.from(0).to(1)
 
-      expect(attribute_class).to have_received(:new).with(name: :foo)
+      expect(attribute_class).to have_received(:new).with(name: :foo, **{})
     end
   end
 
@@ -71,7 +71,8 @@ RSpec.describe JsonApiObjectSerializer::DSL do
         class_with_dsl.has_one :foo, type: "foos"
       end.to change { class_with_dsl._relationship_collection_size }.from(0).to(1)
 
-      expect(relationships_module).to have_received(:has_one).with(name: :foo, type: "foos")
+      expect(relationships_module).to have_received(:has_one)
+        .with(name: :foo, type: "foos", **{})
     end
   end
 end

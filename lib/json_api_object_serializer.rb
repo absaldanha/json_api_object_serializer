@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "json_api_object_serializer/version"
+require "json_api_object_serializer/name_formating"
 require "json_api_object_serializer/attribute_collection"
 require "json_api_object_serializer/relationship_collection"
 require "json_api_object_serializer/relationships"
