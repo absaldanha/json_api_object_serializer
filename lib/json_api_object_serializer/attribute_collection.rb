@@ -18,8 +18,8 @@ module JsonApiObjectSerializer
     end
 
     def serialized_attributes_of(resource_object)
-      attributes.each_with_object({}) do |attribute, hash|
-        hash[attribute.serialized_name] = resource_object.public_send(attribute.name)
+      attributes.inject({}) do |hash, attribute|
+        hash.merge(attribute.serialization_of(resource_object))
       end
     end
 

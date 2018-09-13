@@ -3,22 +3,24 @@
 module JsonApiObjectSerializer
   module Relationships
     class Base
-      attr_reader :name, :type, :serialized_name
+      include SerializedName
 
-      def initialize(name:, type:)
+      attr_reader :name, :type, :options
+
+      def initialize(name:, type:, **options)
         @name = name
         @type = type
-        @serialized_name = name.to_s.tr("_", "-") .to_sym
+        @options = options
       end
 
       def serialization_of(_resource); end
 
       def eql?(other)
-        name == other.name && serialized_name == other.serialized_name
+        name == other.name
       end
 
       def hash
-        [name, serialized_name].hash
+        name.hash
       end
     end
   end

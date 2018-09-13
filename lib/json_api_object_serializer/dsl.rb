@@ -14,16 +14,16 @@ module JsonApiObjectSerializer
       @type = type.to_s
     end
 
-    def attribute(name)
-      @attribute_collection.add(Attribute.new(name: name))
+    def attribute(name, **options)
+      @attribute_collection.add(Attribute.new(name: name, **options))
     end
 
     def attributes(*names)
       names.each { |name| attribute(name) }
     end
 
-    def has_one(name, type:)
-      @relationship_collection.add(Relationships.has_one(name: name, type: type))
+    def has_one(name, type:, **options)
+      @relationship_collection.add(Relationships.has_one(name: name, type: type, **options))
     end
   end
 end

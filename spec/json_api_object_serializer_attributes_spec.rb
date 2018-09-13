@@ -67,5 +67,27 @@ RSpec.describe JsonApiObjectSerializer do
         )
       end
     end
+
+    context "with alias" do
+      it "serializes the object correctly with the declared attributes and aliases" do
+        serializer_class.attribute :first_name, as: :my_first_name
+        serializer_class.attribute :last_name, as: :my_last_name
+
+        dummy = dummy_object(
+          id: 123, attributes: { first_name: "Alexandre", last_name: "Saldanha" }
+        )
+        serializer = serializer_class.new
+
+        expect(serializer.to_hash(dummy)).to eq(
+          data: {
+            id: "123",
+            type: "dummies",
+            attributes: {
+              "my-first-name": "Alexandre", "my-last-name": "Saldanha"
+            }
+          }
+        )
+      end
+    end
   end
 end
