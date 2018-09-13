@@ -11,7 +11,6 @@ require "json_api_object_serializer/serialization"
 module JsonApiObjectSerializer
   def self.included(base)
     base.class_eval do
-      extend DSL
       include Serialization
     end
   end

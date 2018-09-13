@@ -23,7 +23,7 @@ module JsonApiObjectSerializer
     end
 
     def has_one(name, type:)
-      @relationship_collection.add(Relationships.build(:has_one, name: name, type: type))
+      @relationship_collection.add(Relationships.has_one(name: name, type: type))
     end
   end
 end

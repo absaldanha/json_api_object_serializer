@@ -18,8 +18,8 @@ module JsonApiObjectSerializer
     end
 
     def serialized_relationships_of(resource_object)
-      relationships.each_with_object({}) do |relationship, hash|
-        hash.merge!(relationship.serialization_of(resource_object))
+      relationships.inject({}) do |hash, relationship|
+        hash.merge(relationship.serialization_of(resource_object))
       end
     end
 

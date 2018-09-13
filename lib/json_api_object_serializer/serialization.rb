@@ -3,6 +3,7 @@
 module JsonApiObjectSerializer
   module Serialization
     def self.included(base)
+      base.extend DSL
       base.extend ClassMethods
     end
 
