@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe JsonApiObjectSerializer::AttributeCollection do
-  include DummyObject
-
   subject(:attribute_collection) { JsonApiObjectSerializer::AttributeCollection.new }
 
   describe "#add" do
@@ -28,7 +26,7 @@ RSpec.describe JsonApiObjectSerializer::AttributeCollection do
 
   describe "#serialized_attributes_of" do
     it "returns the serialized hash of attributes of the given resource object" do
-      dummy = dummy_object
+      dummy = double(:dummy)
       first_name_attribute = instance_double(
         JsonApiObjectSerializer::Attribute, serialization_of: { "first-name": "Alexandre" }
       )

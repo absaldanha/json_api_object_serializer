@@ -33,6 +33,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "multi_json", "~> 1.13.1"
 
   spec.add_development_dependency "bundler", "~> 1.16.4"
+  spec.add_development_dependency "json-schema", "~> 2.7.0"
   spec.add_development_dependency "pry-byebug", "~> 3.4.0"
   spec.add_development_dependency "rake", "~> 12.3.1"
   spec.add_development_dependency "rspec", "~> 3.8.0"
