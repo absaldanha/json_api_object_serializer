@@ -2,19 +2,25 @@
 
 module JsonApiObjectSerializer
   class Attribute
-    attr_reader :name, :serialized_name
+    include SerializedName
 
-    def initialize(name:)
+    attr_reader :name, :options
+
+    def initialize(name:, **options)
       @name = name
-      @serialized_name = name.to_s.tr("_", "-") .to_sym
+      @options = options
+    end
+
+    def serialization_of(resource_object)
+      { serialized_name => resource_object.public_send(name) }
     end
 
     def eql?(other)
-      name == other.name && serialized_name == other.serialized_name
+      name == other.name
     end
 
     def hash
-      [name, serialized_name].hash
+      name.hash
     end
   end
 end

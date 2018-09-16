@@ -7,6 +7,8 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
+    addressable (2.5.2)
+      public_suffix (>= 2.0.2, < 4.0)
     ast (2.4.0)
     byebug (9.0.6)
     coderay (1.1.2)
@@ -14,6 +16,8 @@ GEM
     docile (1.1.5)
     jaro_winkler (1.5.1)
     json (2.1.0)
+    json-schema (2.7.0)
+      addressable (>= 2.4)
     method_source (0.9.0)
     multi_json (1.13.1)
     parallel (1.12.1)
@@ -26,6 +30,7 @@ GEM
     pry-byebug (3.4.3)
       byebug (>= 9.0, < 9.1)
       pry (~> 0.10)
+    public_suffix (3.0.3)
     rainbow (3.0.0)
     rake (12.3.1)
     rspec (3.8.0)
@@ -62,6 +67,7 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 1.16.4)
+  json-schema (~> 2.7.0)
   json_api_object_serializer!
   pry-byebug (~> 3.4.0)
   rake (~> 12.3.1)
