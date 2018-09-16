@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe JsonApiObjectSerializer::RelationshipCollection do
-  include DummyObject
-
   subject(:relationship_collection) { JsonApiObjectSerializer::RelationshipCollection.new }
 
   describe "#add" do
@@ -29,7 +27,7 @@ RSpec.describe JsonApiObjectSerializer::RelationshipCollection do
 
   describe "#serialized_relationships_of" do
     it "returns the serialized hash of relationships of the given resource object" do
-      dummy = dummy_object
+      dummy = double(:dummy)
       address_relationship = instance_double(
         JsonApiObjectSerializer::Relationships::Base,
         serialization_of: { address: { data: { id: "address_id", type: "addresses" } } }

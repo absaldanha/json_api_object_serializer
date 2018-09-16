@@ -1,15 +1,13 @@
 # frozen_string_literal: true
 
 RSpec.describe JsonApiObjectSerializer::Attribute do
-  include DummyObject
-
   it_behaves_like "a class with serialized name", name: :foo_bar
 
   describe "#serialization_of" do
     subject(:attribute) { JsonApiObjectSerializer::Attribute.new(name: :foo) }
 
     it "returns the serialized hash of this attribute of the given resource object" do
-      dummy = dummy_object(attributes: { foo: "foo123" })
+      dummy = double(:dummy, foo: "foo123")
 
       expect(attribute.serialization_of(dummy)).to eq foo: "foo123"
     end

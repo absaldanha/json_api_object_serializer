@@ -25,5 +25,9 @@ module JsonApiObjectSerializer
     def has_one(name, type:, **options)
       @relationship_collection.add(Relationships.has_one(name: name, type: type, **options))
     end
+
+    def has_many(name, type:, **options)
+      @relationship_collection.add(Relationships.has_many(name: name, type: type, **options))
+    end
   end
 end

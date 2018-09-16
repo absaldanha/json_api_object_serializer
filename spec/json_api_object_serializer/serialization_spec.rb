@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe JsonApiObjectSerializer::Serialization do
-  include DummyObject
-
   let(:attribute_collection) do
     instance_double(
       JsonApiObjectSerializer::AttributeCollection,
@@ -38,7 +36,7 @@ RSpec.describe JsonApiObjectSerializer::Serialization do
       end
 
       it "returns the serialized hash of the given resource object without any relationship" do
-        dummy_object = dummy_object(id: 1)
+        dummy_object = double(:dummy_object, id: 1)
 
         expect(dummy_serializer_object.to_hash(dummy_object)).to match(
           data: {
@@ -71,7 +69,7 @@ RSpec.describe JsonApiObjectSerializer::Serialization do
       end
 
       it "returns the serialized hash of the given resource object with their relationships" do
-        dummy = dummy_object(id: 123)
+        dummy = double(:dummy, id: 123)
 
         expect(dummy_serializer_object.to_hash(dummy)).to match(
           data: {
