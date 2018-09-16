@@ -6,7 +6,11 @@ RSpec.describe JsonApiObjectSerializer::DSL do
       extend JsonApiObjectSerializer::DSL
 
       def self._type
-        @type
+        @identifier.type
+      end
+
+      def self._id
+        @identifier.id
       end
 
       def self._attribute_collection_size
