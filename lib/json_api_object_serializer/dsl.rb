@@ -6,12 +6,17 @@ module JsonApiObjectSerializer
       base.class_eval do
         @attribute_collection = AttributeCollection.new
         @relationship_collection = RelationshipCollection.new
+        @identifier = Identifier.new
         @type = nil
       end
     end
 
+    def id(custom_id)
+      @identifier.id = custom_id
+    end
+
     def type(type)
-      @type = type.to_s
+      @identifier.type = type
     end
 
     def attribute(name, **options)

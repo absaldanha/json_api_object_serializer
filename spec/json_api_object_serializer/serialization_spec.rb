@@ -11,7 +11,7 @@ RSpec.describe JsonApiObjectSerializer::Serialization do
   let(:dummy_serializer_class) do
     Class.new do
       class << self
-        attr_writer :type, :attribute_collection, :relationship_collection
+        attr_writer :type, :attribute_collection, :relationship_collection, :identifier
       end
 
       include JsonApiObjectSerializer::Serialization
@@ -21,8 +21,15 @@ RSpec.describe JsonApiObjectSerializer::Serialization do
   subject(:dummy_serializer_object) { dummy_serializer_class.new }
 
   describe "#to_hash" do
+    let(:identifier) do
+      instance_double(
+        JsonApiObjectSerializer::Identifier,
+        serialized_identifier_of: { id: "1", type: "dummies" }
+      )
+    end
+
     before do
-      dummy_serializer_class.type = "dummies"
+      dummy_serializer_class.identifier = identifier
       dummy_serializer_class.attribute_collection = attribute_collection
     end
 
@@ -36,7 +43,7 @@ RSpec.describe JsonApiObjectSerializer::Serialization do
       end
 
       it "returns the serialized hash of the given resource object without any relationship" do
-        dummy_object = double(:dummy_object, id: 1)
+        dummy_object = double(:dummy_object)
 
         expect(dummy_serializer_object.to_hash(dummy_object)).to match(
           data: {
@@ -69,11 +76,11 @@ RSpec.describe JsonApiObjectSerializer::Serialization do
       end
 
       it "returns the serialized hash of the given resource object with their relationships" do
-        dummy = double(:dummy, id: 123)
+        dummy = double(:dummy)
 
         expect(dummy_serializer_object.to_hash(dummy)).to match(
           data: {
-            id: "123",
+            id: "1",
             type: "dummies",
             attributes: { foo: "foo", bar: "bar" },
             relationships: {

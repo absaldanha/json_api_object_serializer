@@ -14,15 +14,15 @@ module JsonApiObjectSerializer
     module ClassMethods
       def serialize_to_hash(resource_object)
         result_hash = { data: nil }
-        result_hash[:data] = id_from(resource_object)
+        result_hash[:data] = identifier_of(resource_object)
         result_hash[:data].merge!(attributes_from(resource_object))
         result_hash[:data].merge!(relationships_from(resource_object))
 
         result_hash
       end
 
-      def id_from(resource_object)
-        { id: resource_object.id.to_s, type: @type }
+      def identifier_of(resource_object)
+        @identifier.serialized_identifier_of(resource_object)
       end
 
       def attributes_from(resource_object)
