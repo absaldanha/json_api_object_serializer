@@ -6,11 +6,7 @@ module JsonApiObjectSerializer
       def serialize(resource)
         relationship = resource.public_send(name)
 
-        {
-          serialized_name => {
-            data: { id: relationship.id.to_s, type: type }
-          }
-        }
+        { serialized_name => { data: identifier.serialize(relationship) } }
       end
     end
   end

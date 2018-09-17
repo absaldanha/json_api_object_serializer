@@ -3,6 +3,15 @@
 RSpec.shared_examples "a relationship object" do
   it_behaves_like "a class with serialized name", name: :foo_bar, type: "foos"
 
+  it "sets the correct relationship identifier" do
+    relationship = described_class.new(name: :foo, type: "foos")
+
+    aggregate_failures do
+      expect(relationship.identifier).to be_an_instance_of JsonApiObjectSerializer::Identifier
+      expect(relationship.identifier.type).to eq "foos"
+    end
+  end
+
   describe "#eql?" do
     subject(:relationship) { described_class.new(name: :foo_bar, type: "foos") }
 

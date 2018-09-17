@@ -9,7 +9,7 @@ module JsonApiObjectSerializer
         {
           serialized_name => {
             data: relationships.map do |relationship|
-              { type: type, id: relationship.id.to_s }
+              identifier.serialize(relationship)
             end
           }
         }
