@@ -9,7 +9,7 @@ module JsonApiObjectSerializer
       @type = nil
     end
 
-    def serialized_identifier_of(resource_object)
+    def serialize(resource_object)
       { id: id.call(resource_object).to_s, type: type }
     end
 

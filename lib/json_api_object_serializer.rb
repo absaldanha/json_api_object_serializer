@@ -13,7 +13,7 @@ require "json_api_object_serializer/serialization"
 module JsonApiObjectSerializer
   def self.included(base)
     base.class_eval do
-      include Serialization
+      extend Serialization
     end
   end
 end

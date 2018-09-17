@@ -17,9 +17,9 @@ module JsonApiObjectSerializer
       attributes.add(attribute)
     end
 
-    def serialized_attributes_of(resource_object)
+    def serialize(resource)
       attributes.inject({}) do |hash, attribute|
-        hash.merge(attribute.serialization_of(resource_object))
+        hash.merge(attribute.serialize(resource))
       end
     end
 

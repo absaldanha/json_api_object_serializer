@@ -11,8 +11,8 @@ module JsonApiObjectSerializer
       @options = options
     end
 
-    def serialization_of(resource_object)
-      { serialized_name => resource_object.public_send(name) }
+    def serialize(resource)
+      { serialized_name => resource.public_send(name) }
     end
 
     def eql?(other)

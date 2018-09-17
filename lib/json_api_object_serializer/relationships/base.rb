@@ -13,7 +13,7 @@ module JsonApiObjectSerializer
         @options = options
       end
 
-      def serialization_of(_resource); end
+      def serialize(_resource); end
 
       def eql?(other)
         name == other.name

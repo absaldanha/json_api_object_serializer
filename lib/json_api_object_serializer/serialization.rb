@@ -2,42 +2,41 @@
 
 module JsonApiObjectSerializer
   module Serialization
-    def self.included(base)
+    def self.extended(base)
       base.extend DSL
-      base.extend ClassMethods
     end
 
-    def to_hash(resource_object)
-      self.class.serialize_to_hash(resource_object)
+    def to_hash(resource)
+      resource_hash(resource)
     end
 
-    module ClassMethods
-      def serialize_to_hash(resource_object)
-        result_hash = { data: nil }
-        result_hash[:data] = identifier_of(resource_object)
-        result_hash[:data].merge!(attributes_from(resource_object))
-        result_hash[:data].merge!(relationships_from(resource_object))
+    private
 
-        result_hash
-      end
+    def resource_hash(resource)
+      result_hash = { data: nil }
+      result_hash[:data] = identifier_of(resource)
+      result_hash[:data].merge!(attributes_from(resource))
+      result_hash[:data].merge!(relationships_from(resource))
 
-      def identifier_of(resource_object)
-        @identifier.serialized_identifier_of(resource_object)
-      end
+      result_hash
+    end
 
-      def attributes_from(resource_object)
-        { attributes: resource_attributes_from(resource_object) }
-      end
+    def identifier_of(resource)
+      identifier.serialize(resource)
+    end
 
-      def relationships_from(resource_object)
-        return {} if @relationship_collection.empty?
+    def attributes_from(resource)
+      { attributes: resource_attributes_from(resource) }
+    end
 
-        { relationships: @relationship_collection.serialized_relationships_of(resource_object) }
-      end
+    def relationships_from(resource)
+      return {} if relationship_collection.empty?
 
-      def resource_attributes_from(resource_object)
-        @attribute_collection.serialized_attributes_of(resource_object)
-      end
+      { relationships: relationship_collection.serialize(resource) }
+    end
+
+    def resource_attributes_from(resource)
+      attribute_collection.serialize(resource)
     end
   end
 end
