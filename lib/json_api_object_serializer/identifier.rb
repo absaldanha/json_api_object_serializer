@@ -4,12 +4,12 @@ module JsonApiObjectSerializer
   class Identifier
     attr_reader :id, :type
 
-    def initialize
-      @id = proc { |resource| resource.id }
-      @type = nil
+    def initialize(id: nil, type: nil)
+      @id = id || proc { |resource| resource.id }
+      @type = type
     end
 
-    def serialized_identifier_of(resource_object)
+    def serialize(resource_object)
       { id: id.call(resource_object).to_s, type: type }
     end
 

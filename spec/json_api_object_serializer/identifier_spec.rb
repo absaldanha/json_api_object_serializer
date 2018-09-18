@@ -17,13 +17,12 @@ RSpec.describe JsonApiObjectSerializer::Identifier do
     end
   end
 
-  describe "#serialized_identifier_of" do
+  describe "#serialize" do
     it "returns the serialized identifier hash of the given resource object" do
       identifier.type = "foos"
-      resource_object = double(:resource_object, id: 1)
+      resource = double(:resource, id: 1)
 
-      expect(identifier.serialized_identifier_of(resource_object))
-        .to eq id: "1", type: "foos"
+      expect(identifier.serialize(resource)).to eq id: "1", type: "foos"
     end
   end
 end

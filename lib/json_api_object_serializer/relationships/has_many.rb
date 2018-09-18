@@ -3,12 +3,14 @@
 module JsonApiObjectSerializer
   module Relationships
     class HasMany < Base
-      def serialization_of(resource_object)
-        relationship_array = resource_object.public_send(name)
+      def serialize(resource)
+        relationships = resource.public_send(name)
 
         {
           serialized_name => {
-            data: relationship_array.map { |relationship| { type: type, id: relationship.id.to_s } }
+            data: relationships.map do |relationship|
+              identifier.serialize(relationship)
+            end
           }
         }
       end

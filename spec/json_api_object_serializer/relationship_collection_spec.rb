@@ -6,6 +6,7 @@ RSpec.describe JsonApiObjectSerializer::RelationshipCollection do
   describe "#add" do
     it "adds a new relationship" do
       relationship = JsonApiObjectSerializer::Relationships::HasOne.new(name: :foo, type: "foos")
+
       relationship_collection.add(relationship)
 
       expect(relationship_collection).to include relationship
@@ -25,16 +26,16 @@ RSpec.describe JsonApiObjectSerializer::RelationshipCollection do
     end
   end
 
-  describe "#serialized_relationships_of" do
+  describe "#serialize" do
     it "returns the serialized hash of relationships of the given resource object" do
-      dummy = double(:dummy)
+      resource = double(:resource)
       address_relationship = instance_double(
         JsonApiObjectSerializer::Relationships::Base,
-        serialization_of: { address: { data: { id: "address_id", type: "addresses" } } }
+        serialize: { address: { data: { id: "address_id", type: "addresses" } } }
       )
       tasks_relationship = instance_double(
         JsonApiObjectSerializer::Relationships::Base,
-        serialization_of: { tasks: { data: [
+        serialize: { tasks: { data: [
           { id: "task_id_1", type: "tasks" }, { id: "task_id_2", type: "tasks" }
         ] } }
       )
@@ -42,7 +43,7 @@ RSpec.describe JsonApiObjectSerializer::RelationshipCollection do
       relationship_collection.add(address_relationship)
       relationship_collection.add(tasks_relationship)
 
-      expect(relationship_collection.serialized_relationships_of(dummy)).to eq(
+      expect(relationship_collection.serialize(resource)).to eq(
         address: { data: { id: "address_id", type: "addresses" } },
         tasks: {
           data: [

@@ -5,15 +5,16 @@ module JsonApiObjectSerializer
     class Base
       include SerializedName
 
-      attr_reader :name, :type, :options
+      attr_reader :name, :type, :identifier, :options
 
       def initialize(name:, type:, **options)
         @name = name
         @type = type
+        @identifier = Identifier.new(type: type)
         @options = options
       end
 
-      def serialization_of(_resource); end
+      def serialize(_resource); end
 
       def eql?(other)
         name == other.name
