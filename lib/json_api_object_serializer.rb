@@ -2,6 +2,8 @@
 
 require "json_api_object_serializer/version"
 require "json_api_object_serializer/serialized_name"
+require "json_api_object_serializer/null_fieldset"
+require "json_api_object_serializer/fieldset"
 require "json_api_object_serializer/identifier"
 require "json_api_object_serializer/attribute_collection"
 require "json_api_object_serializer/relationship_collection"
