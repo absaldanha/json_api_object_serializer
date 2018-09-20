@@ -6,19 +6,31 @@ module JsonApiObjectSerializer
       base.extend DSL
     end
 
-    def to_hash(resource)
-      resource_hash(resource)
+    def to_hash(resource, **options)
+      data =
+        if options[:collection]
+          serialized_collection(resource, **options)
+        else
+          serialized_hash(resource, **options)
+        end
+
+      { data: data }
     end
 
     private
 
-    def resource_hash(resource)
-      result_hash = { data: nil }
-      result_hash[:data] = identifier_of(resource)
-      result_hash[:data].merge!(attributes_from(resource))
-      result_hash[:data].merge!(relationships_from(resource))
+    def serialized_hash(resource, **_options)
+      return unless resource
 
-      result_hash
+      identifier_of(resource)
+        .merge(attributes_from(resource))
+        .merge(relationships_from(resource))
+    end
+
+    def serialized_collection(resource_collection, **_options)
+      Array(resource_collection)
+        .map { |resource| serialized_hash(resource) }
+        .compact
     end
 
     def identifier_of(resource)
