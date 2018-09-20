@@ -60,4 +60,68 @@ RSpec.describe "Has many relationship", type: :integration do
       end
     end
   end
+
+  context "with custom id" do
+    context "with method name" do
+      subject(:serializer) do
+        Class.new do
+          include JsonApiObjectSerializer
+
+          type "foos"
+          attributes :foo, :bar
+          has_many :baz, type: "bazes", id: :uuid
+        end
+      end
+
+      it "serializes the resource correctly with the custom relationship id method" do
+        baz_relationship = [double(:baz1, uuid: "uuid-1"), double(:baz2, uuid: "uuid-2")]
+        resource = double(:resource, id: 1, foo: "Foo", bar: "Bar", baz: baz_relationship)
+
+        result = serializer.to_hash(resource)
+
+        aggregate_failures do
+          expect(result).to match_jsonapi_schema
+          expect(result).to match(
+            data: a_hash_including(
+              relationships: a_hash_including(
+                baz: { data: [{ type: "bazes", id: "uuid-1" }, { type: "bazes", id: "uuid-2" }] }
+              )
+            )
+          )
+        end
+      end
+    end
+
+    context "with proc" do
+      subject(:serializer) do
+        Class.new do
+          include JsonApiObjectSerializer
+
+          type "foos"
+          attributes :foo, :bar
+          has_many :baz, type: "bazes", id: ->(resource) { "unique-id-#{resource.id}" }
+        end
+      end
+
+      it "serializes the resource correctly with the custom relationship id method" do
+        baz_relationship = [double(:baz1, id: 1), double(:baz2, id: 2)]
+        resource = double(:resource, id: 1, foo: "Foo", bar: "Bar", baz: baz_relationship)
+
+        result = serializer.to_hash(resource)
+
+        aggregate_failures do
+          expect(result).to match_jsonapi_schema
+          expect(result).to match(
+            data: a_hash_including(
+              relationships: a_hash_including(
+                baz: {
+                  data: [{ type: "bazes", id: "unique-id-1" }, { type: "bazes", id: "unique-id-2" }]
+                }
+              )
+            )
+          )
+        end
+      end
+    end
+  end
 end

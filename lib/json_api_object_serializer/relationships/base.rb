@@ -10,7 +10,7 @@ module JsonApiObjectSerializer
       def initialize(name:, type:, **options)
         @name = name
         @type = type
-        @identifier = Identifier.new(type: type)
+        @identifier = Identifier.new(id: options[:id], type: type)
         @options = options
       end
 

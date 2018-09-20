@@ -5,7 +5,7 @@ module JsonApiObjectSerializer
     attr_reader :id, :type
 
     def initialize(id: nil, type: nil)
-      @id = id || proc { |resource| resource.id }
+      @id = callable_id(id) || proc { |resource| resource.id }
       @type = type
     end
 
@@ -18,7 +18,15 @@ module JsonApiObjectSerializer
     end
 
     def id=(custom_id)
-      @id = custom_id.to_proc
+      @id = callable_id(custom_id)
+    end
+
+    private
+
+    def callable_id(id)
+      return unless id
+
+      id.to_proc
     end
   end
 end

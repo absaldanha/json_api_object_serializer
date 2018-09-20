@@ -5,8 +5,6 @@ module JsonApiObjectSerializer
     def self.extended(base)
       base.class_eval do
         singleton_class.class_eval do
-          private
-
           attr_accessor :attribute_collection, :relationship_collection, :identifier
         end
 
