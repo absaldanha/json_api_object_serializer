@@ -17,8 +17,8 @@ module JsonApiObjectSerializer
       relationships.add(relationship)
     end
 
-    def serialize(resource_object)
-      relationships.inject({}) do |hash, relationship|
+    def serialize(resource_object, fieldset: NullFieldset.new)
+      relationships_from(fieldset).inject({}) do |hash, relationship|
         hash.merge(relationship.serialize(resource_object))
       end
     end
@@ -26,5 +26,9 @@ module JsonApiObjectSerializer
     private
 
     attr_reader :relationships
+
+    def relationships_from(fieldset)
+      relationships.select { |relationship| fieldset.include?(relationship.serialized_name) }
+    end
   end
 end
