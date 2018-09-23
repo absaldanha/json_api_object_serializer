@@ -7,14 +7,10 @@ module JsonApiObjectSerializer
   class AttributeCollection
     extend Forwardable
 
-    def_delegators :attributes, :size, :include?
+    def_delegators :attributes, :add
 
     def initialize
       @attributes = Set.new
-    end
-
-    def add(attribute)
-      attributes.add(attribute)
     end
 
     def serialize(resource, fieldset: NullFieldset.new)

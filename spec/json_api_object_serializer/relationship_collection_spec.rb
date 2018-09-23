@@ -3,29 +3,6 @@
 RSpec.describe JsonApiObjectSerializer::RelationshipCollection do
   subject(:relationship_collection) { JsonApiObjectSerializer::RelationshipCollection.new }
 
-  describe "#add" do
-    it "adds a new relationship" do
-      relationship = JsonApiObjectSerializer::Relationships::HasOne.new(name: :foo, type: "foos")
-
-      relationship_collection.add(relationship)
-
-      expect(relationship_collection).to include relationship
-    end
-
-    it "doesn't add a repeated relationship" do
-      original_relationship =
-        JsonApiObjectSerializer::Relationships::HasOne.new(name: :foo, type: "foos")
-      repeated_relationship =
-        JsonApiObjectSerializer::Relationships::HasOne.new(name: :foo, type: "foos")
-
-      relationship_collection.add(original_relationship)
-      relationship_collection.add(repeated_relationship)
-
-      expect(relationship_collection.size).to eq 1
-      expect(relationship_collection).to include original_relationship
-    end
-  end
-
   describe "#serialize" do
     context "with no field restrictions" do
       it "returns the serialized hash of all relationships of the given resource object" do
@@ -80,6 +57,28 @@ RSpec.describe JsonApiObjectSerializer::RelationshipCollection do
         expect(relationship_collection.serialize(resource, fieldset: fieldset)).to eq(
           address: { data: { id: "address_id", type: "addresses" } }
         )
+      end
+    end
+  end
+
+  describe "#find_by_serialized_name" do
+    let(:relationship) do
+      instance_double(JsonApiObjectSerializer::Relationships::Base, serialized_name: :foo)
+    end
+
+    before do
+      relationship_collection.add(relationship)
+    end
+
+    context "when the relationship exists" do
+      it "returns the correct relationship" do
+        expect(relationship_collection.find_by_serialized_name(:foo)).to eq relationship
+      end
+    end
+
+    context "when the relationship doesn't exist" do
+      it "returns nil" do
+        expect(relationship_collection.find_by_serialized_name(:bar)).to be nil
       end
     end
   end

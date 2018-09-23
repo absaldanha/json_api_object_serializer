@@ -5,5 +5,9 @@ module JsonApiObjectSerializer
     def include?(_field)
       true
     end
+
+    def all_fields
+      {}
+    end
   end
 end
