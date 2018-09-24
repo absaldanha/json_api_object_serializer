@@ -16,6 +16,23 @@ module JsonApiObjectSerializer
 
       def serialize(_resource); end
 
+      def fully_serialize(resource, fieldset: NullFieldset.new)
+        relationship = relationship_from(resource)
+        serializer.to_hash(relationship, fully_serialize_options.merge(fields: fieldset.all_fields))
+      end
+
+      def relationship_from(resource)
+        resource.public_send(name)
+      end
+
+      def serializer
+        @serializer ||= options[:serializer]
+      end
+
+      def fully_serialize_options
+        {}
+      end
+
       def eql?(other)
         name == other.name
       end

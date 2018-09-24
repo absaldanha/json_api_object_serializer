@@ -17,4 +17,10 @@ RSpec.describe JsonApiObjectSerializer::Relationships::HasMany do
       )
     end
   end
+
+  describe "#fully_serialize_options" do
+    it "returns the correct options" do
+      expect(relationship.fully_serialize_options).to eq(collection: true)
+    end
+  end
 end
