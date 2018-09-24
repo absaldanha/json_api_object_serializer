@@ -35,4 +35,21 @@ RSpec.shared_examples "a relationship object" do
       expect(relationship.hash).to eq other_equal_relationship.hash
     end
   end
+
+  describe "#fully_serialize" do
+    let!(:relationship_serializer) { spy(:relationship_serializer) }
+
+    subject(:relationship) do
+      described_class.new(name: :foo, type: "foos", serializer: relationship_serializer)
+    end
+
+    it "uses the given serializer to fully serialize the relationship" do
+      foo_relationship = double(:foo_relationship)
+      resource = double(:resource, foo: foo_relationship)
+
+      subject.fully_serialize(resource)
+      expect(relationship_serializer).to have_received(:to_hash)
+        .with(foo_relationship, a_hash_including(fields: {}))
+    end
+  end
 end

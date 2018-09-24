@@ -8,9 +8,26 @@ module JsonApiObjectSerializer
 
     def to_hash(resource, **options)
       fieldset = Fieldset.build(identifier.type, options.fetch(:fields, {}))
+      included = build_included_resources(options.fetch(:include, []))
 
+      serialized_data(resource, fieldset: fieldset, collection: options[:collection])
+        .merge(serialized_included(resource, fieldset: fieldset, included: included))
+    end
+
+    private
+
+    def build_included_resources(includes)
+      IncludedResourceCollection.new.tap do |included_resource_collection|
+        includes.each do |to_include|
+          relationship = relationship_collection.find_by_serialized_name(to_include)
+          included_resource_collection.add(IncludedResource.new(relationship))
+        end
+      end
+    end
+
+    def serialized_data(resource, fieldset:, collection:)
       data =
-        if options[:collection]
+        if collection
           serialized_collection(resource, fieldset: fieldset)
         else
           serialized_hash(resource, fieldset: fieldset)
@@ -18,8 +35,6 @@ module JsonApiObjectSerializer
 
       { data: data }
     end
-
-    private
 
     def serialized_hash(resource, fieldset:)
       return unless resource
@@ -49,6 +64,12 @@ module JsonApiObjectSerializer
 
       relationships = relationship_collection.serialize(resource, fieldset: fieldset)
       relationships.empty? ? {} : { relationships: relationships }
+    end
+
+    def serialized_included(resource, fieldset:, included:)
+      return {} if included.empty?
+
+      { included: included.serialize(resource, fieldset: fieldset) }
     end
   end
 end

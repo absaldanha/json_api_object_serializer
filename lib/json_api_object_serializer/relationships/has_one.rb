@@ -4,7 +4,7 @@ module JsonApiObjectSerializer
   module Relationships
     class HasOne < Base
       def serialize(resource)
-        relationship = resource.public_send(name)
+        relationship = relationship_from(resource)
 
         { serialized_name => { data: identifier.serialize(relationship) } }
       end
