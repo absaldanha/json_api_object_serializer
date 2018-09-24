@@ -14,9 +14,11 @@ module JsonApiObjectSerializer
     end
 
     def serialize(resource, fieldset: NullFieldset.new)
-      included_resources.map do |included_resource|
+      included_hash = included_resources.map do |included_resource|
         included_resource.serialize(resource, fieldset: fieldset)
       end.flatten
+
+      included_hash.uniq { |hash| hash.values_at(:type, :id) }
     end
 
     private
