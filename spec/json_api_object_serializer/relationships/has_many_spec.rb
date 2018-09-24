@@ -3,18 +3,24 @@
 RSpec.describe JsonApiObjectSerializer::Relationships::HasMany do
   it_behaves_like "a relationship object"
 
-  describe "#serialization_of" do
-    subject(:relationship) do
-      JsonApiObjectSerializer::Relationships::HasMany.new(name: :foo_bar, type: "foos")
-    end
+  subject(:relationship) do
+    JsonApiObjectSerializer::Relationships::HasMany.new(name: :foo_bar, type: "foos")
+  end
 
+  describe "#serialize" do
     it "returns the serialized hash of this relationship for the given resource object" do
-      dummy_foo_bar = [double(:dummy_foo_bar1, id: 1), double(:dummy_foo_bar2, id: 2)]
-      dummy = double(:dummy, foo_bar: dummy_foo_bar)
+      foo_bar_relationship = [double(:foo_bar1, id: 1), double(:foo_bar2, id: 2)]
+      resource = double(:resource, foo_bar: foo_bar_relationship)
 
-      expect(relationship.serialization_of(dummy)).to eq(
+      expect(relationship.serialize(resource)).to eq(
         "foo-bar": { data: [{ id: "1", type: "foos" }, { id: "2", type: "foos" }] }
       )
+    end
+  end
+
+  describe "#fully_serialize_options" do
+    it "returns the correct options" do
+      expect(relationship.fully_serialize_options).to eq(collection: true)
     end
   end
 end

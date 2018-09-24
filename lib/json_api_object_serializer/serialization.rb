@@ -2,42 +2,74 @@
 
 module JsonApiObjectSerializer
   module Serialization
-    def self.included(base)
+    def self.extended(base)
       base.extend DSL
-      base.extend ClassMethods
     end
 
-    def to_hash(resource_object)
-      self.class.serialize_to_hash(resource_object)
+    def to_hash(resource, **options)
+      fieldset = Fieldset.build(identifier.type, options.fetch(:fields, {}))
+      included = build_included_resources(options.fetch(:include, []))
+
+      serialized_data(resource, fieldset: fieldset, collection: options[:collection])
+        .merge(serialized_included(resource, fieldset: fieldset, included: included))
     end
 
-    module ClassMethods
-      def serialize_to_hash(resource_object)
-        result_hash = { data: nil }
-        result_hash[:data] = id_from(resource_object)
-        result_hash[:data].merge!(attributes_from(resource_object))
-        result_hash[:data].merge!(relationships_from(resource_object))
+    private
 
-        result_hash
+    def build_included_resources(includes)
+      IncludedResourceCollection.new.tap do |included_resource_collection|
+        includes.each do |to_include|
+          relationship = relationship_collection.find_by_serialized_name(to_include)
+          included_resource_collection.add(IncludedResource.new(relationship))
+        end
       end
+    end
 
-      def id_from(resource_object)
-        { id: resource_object.id.to_s, type: @type }
-      end
+    def serialized_data(resource, fieldset:, collection:)
+      data =
+        if collection
+          serialized_collection(resource, fieldset: fieldset)
+        else
+          serialized_hash(resource, fieldset: fieldset)
+        end
 
-      def attributes_from(resource_object)
-        { attributes: resource_attributes_from(resource_object) }
-      end
+      { data: data }
+    end
 
-      def relationships_from(resource_object)
-        return {} if @relationship_collection.empty?
+    def serialized_hash(resource, fieldset:)
+      return unless resource
 
-        { relationships: @relationship_collection.serialized_relationships_of(resource_object) }
-      end
+      identifier_of(resource)
+        .merge(attributes_from(resource, fieldset: fieldset))
+        .merge(relationships_from(resource, fieldset: fieldset))
+    end
 
-      def resource_attributes_from(resource_object)
-        @attribute_collection.serialized_attributes_of(resource_object)
-      end
+    def serialized_collection(resource_collection, fieldset:)
+      Array(resource_collection)
+        .map { |resource| serialized_hash(resource, fieldset: fieldset) }
+        .compact
+    end
+
+    def identifier_of(resource)
+      identifier.serialize(resource)
+    end
+
+    def attributes_from(resource, fieldset:)
+      attributes = attribute_collection.serialize(resource, fieldset: fieldset)
+      attributes.empty? ? {} : { attributes: attributes }
+    end
+
+    def relationships_from(resource, fieldset:)
+      return {} if relationship_collection.empty?
+
+      relationships = relationship_collection.serialize(resource, fieldset: fieldset)
+      relationships.empty? ? {} : { relationships: relationships }
+    end
+
+    def serialized_included(resource, fieldset:, included:)
+      return {} if included.empty?
+
+      { included: included.serialize(resource, fieldset: fieldset) }
     end
   end
 end
