@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
 require "json_api_object_serializer/version"
+require "json_api_object_serializer/core_ext"
+require "json_api_object_serializer/key_serialization"
 require "json_api_object_serializer/serialized_name"
+require "json_api_object_serializer/meta"
 require "json_api_object_serializer/null_fieldset"
 require "json_api_object_serializer/fieldset"
 require "json_api_object_serializer/identifier"

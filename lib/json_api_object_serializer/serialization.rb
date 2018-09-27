@@ -10,7 +10,8 @@ module JsonApiObjectSerializer
       fieldset = Fieldset.build(identifier.type, options.fetch(:fields, {}))
       included = build_included_resources(options.fetch(:include, []))
 
-      serialized_data(resource, fieldset: fieldset, collection: options[:collection])
+      serialized_meta
+        .merge(serialized_data(resource, fieldset: fieldset, collection: options[:collection]))
         .merge(serialized_included(resource, fieldset: fieldset, included: included))
     end
 
@@ -23,6 +24,12 @@ module JsonApiObjectSerializer
           included_resource_collection.add(IncludedResource.new(relationship))
         end
       end
+    end
+
+    def serialized_meta
+      return {} if meta_object.empty?
+
+      { meta: meta_object.serialize }
     end
 
     def serialized_data(resource, fieldset:, collection:)
