@@ -15,6 +15,10 @@ module JsonApiObjectSerializer
         .merge(serialized_included(resource, fieldset: fieldset, included: included))
     end
 
+    def to_json(resource, **options)
+      MultiJson.dump(to_hash(resource, options))
+    end
+
     private
 
     def build_included_resources(includes)

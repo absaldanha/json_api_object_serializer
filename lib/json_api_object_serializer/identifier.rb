@@ -6,7 +6,7 @@ module JsonApiObjectSerializer
 
     def initialize(id: nil, type: nil)
       @id = id || proc { |resource| resource.id }
-      @type = type
+      @type = type.to_s
     end
 
     def serialize(resource_object)
