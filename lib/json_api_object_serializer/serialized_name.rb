@@ -2,14 +2,10 @@
 
 module JsonApiObjectSerializer
   module SerializedName
+    include KeySerialization
+
     def serialized_name
-      @serialized_name ||= name_formating(options[:as] || name).to_sym
-    end
-
-    private
-
-    def name_formating(string)
-      string.to_s.tr("_", "-")
+      @serialized_name ||= serialized_key(options[:as] || name)
     end
   end
 end

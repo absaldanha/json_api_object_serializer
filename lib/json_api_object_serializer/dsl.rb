@@ -5,12 +5,13 @@ module JsonApiObjectSerializer
     def self.extended(base)
       base.class_eval do
         singleton_class.class_eval do
-          attr_accessor :attribute_collection, :relationship_collection, :identifier
+          attr_accessor :attribute_collection, :relationship_collection, :identifier, :meta_object
         end
 
         self.attribute_collection = AttributeCollection.new
         self.relationship_collection = RelationshipCollection.new
         self.identifier = Identifier.new
+        self.meta_object = Meta.new
       end
     end
 
@@ -36,6 +37,10 @@ module JsonApiObjectSerializer
 
     def has_many(name, type:, **options)
       relationship_collection.add(Relationships.has_many(name: name, type: type, **options))
+    end
+
+    def meta(hash = {})
+      meta_object.add(hash)
     end
   end
 end
