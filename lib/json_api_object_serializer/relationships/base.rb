@@ -7,14 +7,18 @@ module JsonApiObjectSerializer
 
       attr_reader :name, :type, :identifier, :options
 
-      def initialize(name:, type:, **options)
+      def initialize(name:, type:, **options, &block)
         @name = name
         @type = type
         @identifier = Identifier.new(type: type)
         @options = options
+
+        instance_eval(&block) if block_given?
       end
 
-      def serialize(_resource); end
+      def serialize(resource)
+        { serialized_name => serialize_data(resource).merge(serialize_links(resource)) }
+      end
 
       def fully_serialize(resource, fieldset: NullFieldset.new)
         relationship = relationship_from(resource)
@@ -33,12 +37,28 @@ module JsonApiObjectSerializer
         {}
       end
 
+      def serialize_data(_resource); end
+
       def eql?(other)
         name == other.name
       end
 
       def hash
         name.hash
+      end
+
+      def link_collection
+        @link_collection ||= NullLinkCollection.new
+      end
+
+      private
+
+      def links(&block)
+        @link_collection = LinkCollectionBuilder.build(&block)
+      end
+
+      def serialize_links(resource)
+        link_collection.serialize(resource)
       end
     end
   end

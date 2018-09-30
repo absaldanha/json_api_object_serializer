@@ -3,10 +3,10 @@
 module JsonApiObjectSerializer
   module Relationships
     class HasOne < Base
-      def serialize(resource)
+      def serialize_data(resource)
         relationship = relationship_from(resource)
 
-        { serialized_name => { data: identifier.serialize(relationship) } }
+        { data: identifier.serialize(relationship) }
       end
     end
   end

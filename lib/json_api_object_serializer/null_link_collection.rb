@@ -5,5 +5,9 @@ module JsonApiObjectSerializer
     def empty?
       true
     end
+
+    def serialize(_resource)
+      {}
+    end
   end
 end
