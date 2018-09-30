@@ -11,6 +11,7 @@ module JsonApiObjectSerializer
       included = build_included_resources(options.fetch(:include, []))
 
       serialized_meta
+        .merge(serialized_links(resource))
         .merge(serialized_data(resource, fieldset: fieldset, collection: options[:collection]))
         .merge(serialized_included(resource, fieldset: fieldset, included: included))
     end
@@ -34,6 +35,12 @@ module JsonApiObjectSerializer
       return {} if meta_object.empty?
 
       { meta: meta_object.serialize }
+    end
+
+    def serialized_links(resource)
+      return {} if link_collection.empty?
+
+      { links: link_collection.serialize(resource) }
     end
 
     def serialized_data(resource, fieldset:, collection:)

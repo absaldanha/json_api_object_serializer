@@ -5,15 +5,15 @@ require "forwardable"
 module JsonApiObjectSerializer
   class Meta
     include KeySerialization
-    using CoreExt::Hashes
     extend Forwardable
+    using CoreExt::Hashes
 
     def_delegators :hash, :empty?
 
     attr_reader :hash
 
-    def initialize
-      @hash = {}
+    def initialize(hash = {})
+      @hash = hash
     end
 
     def serialize

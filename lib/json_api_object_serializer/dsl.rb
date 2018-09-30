@@ -2,18 +2,22 @@
 
 module JsonApiObjectSerializer
   module DSL
+    # rubocop:disable Metrics/MethodLength
     def self.extended(base)
       base.class_eval do
         singleton_class.class_eval do
-          attr_accessor :attribute_collection, :relationship_collection, :identifier, :meta_object
+          attr_accessor :attribute_collection, :relationship_collection, :identifier, :meta_object,
+                        :link_collection
         end
 
         self.attribute_collection = AttributeCollection.new
         self.relationship_collection = RelationshipCollection.new
         self.identifier = Identifier.new
         self.meta_object = Meta.new
+        self.link_collection = NullLinkCollection.new
       end
     end
+    # rubocop:enable Metrics/MethodLength
 
     def id(custom_id)
       identifier.id = custom_id
@@ -41,6 +45,10 @@ module JsonApiObjectSerializer
 
     def meta(hash = {})
       meta_object.add(hash)
+    end
+
+    def links(&blk)
+      self.link_collection = LinkCollectionBuilder.build(&blk)
     end
   end
 end
