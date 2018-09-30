@@ -14,9 +14,11 @@ module JsonApiObjectSerializer
     end
 
     def serialize(resource)
-      links.inject({}) do |hash, link|
+      links_hash = links.inject({}) do |hash, link|
         hash.merge(link.serialize(resource))
       end
+
+      { links: links_hash }
     end
 
     private

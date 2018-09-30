@@ -27,10 +27,12 @@ RSpec.describe JsonApiObjectSerializer::LinkCollection do
       resource = double(:resource)
 
       expect(link_collection.serialize(resource)).to eq(
-        foo: "foo_link",
-        bar: {
-          href: "bar_link",
-          meta: { meta_key: "meta_value" }
+        links: {
+          foo: "foo_link",
+          bar: {
+            href: "bar_link",
+            meta: { meta_key: "meta_value" }
+          }
         }
       )
     end

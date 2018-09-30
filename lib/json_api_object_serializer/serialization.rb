@@ -38,9 +38,7 @@ module JsonApiObjectSerializer
     end
 
     def serialized_links(resource)
-      return {} if link_collection.empty?
-
-      { links: link_collection.serialize(resource) }
+      link_collection.serialize(resource)
     end
 
     def serialized_data(resource, fieldset:, collection:)

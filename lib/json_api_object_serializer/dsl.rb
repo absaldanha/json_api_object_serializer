@@ -35,12 +35,12 @@ module JsonApiObjectSerializer
       names.each { |name| attribute(name) }
     end
 
-    def has_one(name, type:, **options)
-      relationship_collection.add(Relationships.has_one(name: name, type: type, **options))
+    def has_one(name, type:, **options, &block)
+      relationship_collection.add(Relationships.has_one(name: name, type: type, **options, &block))
     end
 
-    def has_many(name, type:, **options)
-      relationship_collection.add(Relationships.has_many(name: name, type: type, **options))
+    def has_many(name, type:, **options, &block)
+      relationship_collection.add(Relationships.has_many(name: name, type: type, **options, &block))
     end
 
     def meta(hash = {})
