@@ -8,12 +8,12 @@ module JsonApiObjectSerializer
 
     def to_hash(resource, **options)
       fieldset = Fieldset.build(identifier.type, options.fetch(:fields, {}))
-      included = build_included_resources(options.fetch(:include, []))
+      collection = options.fetch(:collection, false)
+      including = options.fetch(:include, [])
 
-      serialized_meta
-        .merge(serialized_links(resource))
-        .merge(serialized_data(resource, fieldset: fieldset, collection: options[:collection]))
-        .merge(serialized_included(resource, fieldset: fieldset, included: included))
+      serialized_related_info(resource)
+        .merge(serialized_data(resource, fieldset, collection))
+        .merge(serialized_included(resource, fieldset, including, collection))
     end
 
     def to_json(resource, **options)
@@ -22,47 +22,40 @@ module JsonApiObjectSerializer
 
     private
 
-    def build_included_resources(includes)
-      IncludedResourceCollection.new.tap do |included_resource_collection|
-        includes.each do |to_include|
-          relationship = relationship_collection.find_by_serialized_name(to_include)
-          included_resource_collection.add(IncludedResource.new(relationship))
-        end
-      end
+    def serialized_related_info(resource)
+      serialized_meta.merge(serialized_links(resource))
     end
 
     def serialized_meta
-      return {} if meta_object.empty?
-
-      { meta: meta_object.serialize }
+      meta_object.serialize
     end
 
     def serialized_links(resource)
       link_collection.serialize(resource)
     end
 
-    def serialized_data(resource, fieldset:, collection:)
+    def serialized_data(resource, fieldset, collection)
       data =
         if collection
-          serialized_collection(resource, fieldset: fieldset)
+          serialized_collection(resource, fieldset)
         else
-          serialized_hash(resource, fieldset: fieldset)
+          serialized_hash(resource, fieldset)
         end
 
       { data: data }
     end
 
-    def serialized_hash(resource, fieldset:)
+    def serialized_hash(resource, fieldset)
       return unless resource
 
       identifier_of(resource)
-        .merge(attributes_from(resource, fieldset: fieldset))
-        .merge(relationships_from(resource, fieldset: fieldset))
+        .merge(attributes_from(resource, fieldset))
+        .merge(relationships_from(resource, fieldset))
     end
 
-    def serialized_collection(resource_collection, fieldset:)
+    def serialized_collection(resource_collection, fieldset)
       Array(resource_collection)
-        .map { |resource| serialized_hash(resource, fieldset: fieldset) }
+        .map { |resource| serialized_hash(resource, fieldset) }
         .compact
     end
 
@@ -70,22 +63,17 @@ module JsonApiObjectSerializer
       identifier.serialize(resource)
     end
 
-    def attributes_from(resource, fieldset:)
-      attributes = attribute_collection.serialize(resource, fieldset: fieldset)
-      attributes.empty? ? {} : { attributes: attributes }
+    def attributes_from(resource, fieldset)
+      attribute_collection.serialize(resource, fieldset: fieldset)
     end
 
-    def relationships_from(resource, fieldset:)
-      return {} if relationship_collection.empty?
-
-      relationships = relationship_collection.serialize(resource, fieldset: fieldset)
-      relationships.empty? ? {} : { relationships: relationships }
+    def relationships_from(resource, fieldset)
+      relationship_collection.serialize(resource, fieldset: fieldset)
     end
 
-    def serialized_included(resource, fieldset:, included:)
-      return {} if included.empty?
-
-      { included: included.serialize(resource, fieldset: fieldset) }
+    def serialized_included(resource, fieldset, including, collection)
+      included_collection = IncludedResourceCollection.build(including, relationship_collection)
+      included_collection.serialize(resource, fieldset: fieldset, collection: collection)
     end
   end
 end

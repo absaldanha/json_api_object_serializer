@@ -20,9 +20,13 @@ module JsonApiObjectSerializer
         { serialized_name => serialize_data(resource).merge(serialize_links(resource)) }
       end
 
-      def fully_serialize(resource, fieldset: NullFieldset.new)
+      def fully_serialize(resource, fieldset: NullFieldset.new, including: [])
         relationship = relationship_from(resource)
-        serializer.to_hash(relationship, fully_serialize_options.merge(fields: fieldset.all_fields))
+
+        serializer.to_hash(
+          relationship,
+          fully_serialize_options.merge(fields: fieldset.all_fields, include: including)
+        )
       end
 
       def relationship_from(resource)

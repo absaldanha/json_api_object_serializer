@@ -12,9 +12,22 @@ RSpec.describe JsonApiObjectSerializer::Meta do
   end
 
   describe "#serialize" do
-    it "returns the serialized inner hash" do
-      meta.add(foo: "foo", fuz_bar: "fuz-bar", bar: { "fuz" => "fuz" })
-      expect(meta.serialize).to eq(foo: "foo", "fuz-bar": "fuz-bar", bar: { fuz: "fuz" })
+    context "when it is empty" do
+      it "returns an empty hash" do
+        expect(meta.serialize).to eq({})
+      end
+    end
+
+    context "when it is not empty" do
+      before do
+        meta.add(foo: "foo", fuz_bar: "fuz-bar", bar: { "fuz" => "fuz" })
+      end
+
+      it "returns the serialized inner hash" do
+        expect(meta.serialize).to eq(
+          meta: { foo: "foo", "fuz-bar": "fuz-bar", bar: { fuz: "fuz" } }
+        )
+      end
     end
   end
 end

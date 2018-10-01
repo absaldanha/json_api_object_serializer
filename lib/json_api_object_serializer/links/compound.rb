@@ -30,7 +30,7 @@ module JsonApiObjectSerializer
 
       def serialized_meta(resource)
         meta_hash = meta_blk.call(resource)
-        { meta: Meta.new(meta_hash).serialize }
+        Meta.new(meta_hash).serialize
       end
     end
   end

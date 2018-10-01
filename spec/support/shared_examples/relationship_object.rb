@@ -117,7 +117,7 @@ RSpec.shared_examples "a relationship object" do
 
       subject.fully_serialize(resource)
       expect(relationship_serializer).to have_received(:to_hash)
-        .with(foo_relationship, a_hash_including(fields: {}))
+        .with(foo_relationship, a_hash_including(fields: {}, include: []))
     end
   end
 end
