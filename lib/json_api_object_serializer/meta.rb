@@ -17,7 +17,9 @@ module JsonApiObjectSerializer
     end
 
     def serialize
-      hash.deep_transform_keys { |key| serialized_key(key) }
+      return {} if empty?
+
+      { meta: hash.deep_transform_keys { |key| serialized_key(key) } }
     end
 
     def add(other_hash = {})

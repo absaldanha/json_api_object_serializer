@@ -14,12 +14,18 @@ module JsonApiObjectSerializer
     end
 
     def serialize(resource_object, fieldset: NullFieldset.new)
-      relationships_from(fieldset).inject({}) do |hash, relationship|
+      return {} if empty?
+
+      serialized_relationships = relationships_from(fieldset).inject({}) do |hash, relationship|
         hash.merge(relationship.serialize(resource_object))
       end
+
+      serialized_relationships.empty? ? {} : { relationships: serialized_relationships }
     end
 
-    def find_by_serialized_name(serialized_name)
+    def find_by_serialized_name(name)
+      serialized_name = name.to_sym
+
       relationships.find { |relationship| relationship.serialized_name == serialized_name }
     end
 

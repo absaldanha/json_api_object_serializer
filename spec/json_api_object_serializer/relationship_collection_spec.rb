@@ -4,59 +4,77 @@ RSpec.describe JsonApiObjectSerializer::RelationshipCollection do
   subject(:relationship_collection) { JsonApiObjectSerializer::RelationshipCollection.new }
 
   describe "#serialize" do
-    context "with no field restrictions" do
-      it "returns the serialized hash of all relationships of the given resource object" do
+    context "when collection is empty" do
+      it "returns an empty hash" do
         resource = double(:resource)
-        address_relationship = instance_double(
-          JsonApiObjectSerializer::Relationships::Base,
-          serialized_name: :address,
-          serialize: { address: { data: { id: "address_id", type: "addresses" } } }
-        )
-        tasks_relationship = instance_double(
-          JsonApiObjectSerializer::Relationships::Base,
-          serialized_name: :tasks,
-          serialize: { tasks: { data: [
-            { id: "task_id_1", type: "tasks" }, { id: "task_id_2", type: "tasks" }
-          ] } }
-        )
 
-        relationship_collection.add(address_relationship)
-        relationship_collection.add(tasks_relationship)
-
-        expect(relationship_collection.serialize(resource)).to eq(
-          address: { data: { id: "address_id", type: "addresses" } },
-          tasks: {
-            data: [
-              { id: "task_id_1", type: "tasks" }, { id: "task_id_2", type: "tasks" }
-            ]
-          }
-        )
+        expect(relationship_collection.serialize(resource)).to eq({})
       end
     end
 
-    context "with field restrictions" do
-      it "returns the serialized hash of specified relationships of the given resource object" do
-        resource = double(:resource)
-        fieldset = instance_double(JsonApiObjectSerializer::Fieldset)
-        address_relationship = instance_double(
-          JsonApiObjectSerializer::Relationships::Base,
-          serialize: { address: { data: { id: "address_id", type: "addresses" } } },
-          serialized_name: :address
-        )
-        tasks_relationship = instance_double(
-          JsonApiObjectSerializer::Relationships::Base,
-          serialized_name: :tasks
-        )
+    context "when collection is not empty" do
+      context "and some field restriction is applied" do
+        let(:address_relationship) do
+          instance_double(
+            JsonApiObjectSerializer::Relationships::Base,
+            serialize: { address: { data: { id: "address_id", type: "addresses" } } },
+            serialized_name: :address
+          )
+        end
 
-        allow(fieldset).to receive(:include?).with(:address).and_return(true)
-        allow(fieldset).to receive(:include?).with(:tasks).and_return(false)
+        let(:tasks_relationship) do
+          instance_double(
+            JsonApiObjectSerializer::Relationships::Base,
+            serialized_name: :tasks
+          )
+        end
 
-        relationship_collection.add(address_relationship)
-        relationship_collection.add(tasks_relationship)
+        before do
+          relationship_collection.add(address_relationship)
+          relationship_collection.add(tasks_relationship)
+        end
 
-        expect(relationship_collection.serialize(resource, fieldset: fieldset)).to eq(
-          address: { data: { id: "address_id", type: "addresses" } }
-        )
+        it "returns the serialized hash of only the permitted relationships" do
+          resource = double(:resource)
+          fieldset = instance_double(JsonApiObjectSerializer::Fieldset)
+
+          allow(fieldset).to receive(:include?).with(:address).and_return(true)
+          allow(fieldset).to receive(:include?).with(:tasks).and_return(false)
+
+          expect(relationship_collection.serialize(resource, fieldset: fieldset)).to eq(
+            relationships: {
+              address: { data: { id: "address_id", type: "addresses" } }
+            }
+          )
+        end
+      end
+
+      context "and field restriction is applied to all relatonships" do
+        let(:address_relationship) do
+          instance_double(
+            JsonApiObjectSerializer::Relationships::Base,
+            serialized_name: :address
+          )
+        end
+
+        let(:tasks_relationship) do
+          instance_double(
+            JsonApiObjectSerializer::Relationships::Base,
+            serialized_name: :tasks
+          )
+        end
+
+        before do
+          relationship_collection.add(address_relationship)
+          relationship_collection.add(tasks_relationship)
+        end
+
+        it "returns an empty hash" do
+          resource = double(:resource)
+          fieldset = instance_double(JsonApiObjectSerializer::Fieldset, include?: false)
+
+          expect(relationship_collection.serialize(resource, fieldset: fieldset)).to eq({})
+        end
       end
     end
   end
